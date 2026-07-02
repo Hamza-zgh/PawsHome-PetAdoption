@@ -1,0 +1,97 @@
+{% extends 'pets/home.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Admin Dashboard</h2>
+
+    <!-- All Pets Section -->
+    <div class="d-flex justify-content-between mb-4">
+        <h3>All Pets</h3>
+        <a href="{% url 'add_pet' %}" class="btn btn-primary">Add New Pet</a>
+    </div>
+
+    {% if all_pets %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Breed</th>
+                    <th>Posted By</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pet in all_pets %}
+                <tr>
+                    <td>{{ pet.name }}</td>
+                    <td>{{ pet.get_pet_type_display }}</td>
+                    <td>{{ pet.breed }}</td>
+                    <td>{{ pet.posted_by.username }}</td>
+                    <td>
+                        {% if pet.is_adopted %}
+                            <span class="badge bg-success">Adopted</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Available</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'pet_details' pet.id %}" class="btn btn-sm btn-info">View</a>
+                        <a href="{% url 'edit_pet' pet.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No pets in the system yet.</div>
+    {% endif %}
+
+    <!-- All Adoption Requests Section -->
+    <h3 class="mt-5">All Adoption Requests</h3>
+
+    {% if all_requests %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Pet</th>
+                    <th>Applicant</th>
+                    <th>Request Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in all_requests %}
+                <tr>
+                    <td>{{ request.pet.name }}</td>
+                    <td>{{ request.user.username }}</td>
+                    <td>{{ request.requested_at|date:"M d, Y" }}</td>
+                    <td>
+                        <span class="badge
+                            {% if request.status == 'APPROVED' %}bg-success
+                            {% elif request.status == 'REJECTED' %}bg-danger
+                            {% else %}bg-warning text-dark{% endif %}">
+                            {{ request.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'manage_adoption' request.id %}" class="btn btn-sm btn-primary">
+                            {% if request.status == 'PENDING' %}Review{% else %}View{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">No adoption requests yet.</div>
+    {% endif %}
+</div>
+{% endblock %}

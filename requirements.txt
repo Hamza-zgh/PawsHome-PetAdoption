@@ -1,0 +1,8 @@
+Django>=5.0,<5.3
+Pillow>=10.0.0
+python-dotenv>=1.0.0
+
+# Only needed if using MySQL:
+# mysqlclient>=2.2.0
+# OR
+# PyMySQL>=1.1.0

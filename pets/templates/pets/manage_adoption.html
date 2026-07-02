@@ -1,0 +1,58 @@
+{% extends 'pets/home.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Adoption Request</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Request Details</h3>
+        </div>
+        <div class="card-body">
+            <p><strong>Pet:</strong> {{ demand.pet.name }}</p>
+            <p><strong>Applicant:</strong> {{ demand.user.username }}</p>
+            <p><strong>Request Date:</strong> {{ demand.requested_at|date:"M d, Y" }}</p>
+            <p><strong>Current Status:</strong>
+                <span class="badge
+                    {% if demand.status == 'APPROVED' %}bg-success
+                    {% elif demand.status == 'REJECTED' %}bg-danger
+                    {% else %}bg-warning text-dark{% endif %}">
+                    {{ demand.get_status_display }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Application Information</h3>
+        </div>
+        <div class="card-body">
+            <p><strong>Experience:</strong> {{ demand.experience }}</p>
+            <p><strong>Past Ownership:</strong> {% if demand.past_ownership %}Yes{% else %}No{% endif %}</p>
+            <p><strong>Living Arrangement:</strong> {{ demand.living_arrangement }}</p>
+            <p><strong>Motivation Letter:</strong> {{ demand.motivation_letter }}</p>
+        </div>
+    </div>
+
+    {% if demand.status == 'PENDING' %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex gap-2">
+            <button type="submit" name="status" value="APPROVED" class="btn btn-success">Approve</button>
+            <button type="submit" name="status" value="REJECTED" class="btn btn-danger">Reject</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+    {% else %}
+    <div class="alert alert-info">
+        This request was {{ demand.get_status_display|lower }} on {{ demand.decided_at|date:"M d, Y" }}
+        {% if demand.approved_by %}
+            by {{ demand.approved_by.username }}
+        {% endif %}
+    </div>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,410 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawsHome - Adopt a Pet</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2A9D8F;
+            --secondary-color: #264653;
+            --accent-color: #E9C46A;
+            --light-color: #F4F4F4;
+        }
+
+        .fa-paw:before {
+            content: "\f1b0";
+            color: #00ff85;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url('{% static "users/assets/images/bg.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            padding: 6rem 0;
+        }
+
+        .pet-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .pet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .pet-image {
+            height: 250px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .adoption-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .filter-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-links a {
+            color: var(--light-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-paw me-2"></i>PawsHome
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Available Pets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Success Stories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if user.is_authenticated %}
+                    <span class="navbar-text text-white me-3">
+                        <i class="fas fa-user-circle me-1"></i> Hello, {{ user.username }}
+                    </span>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-light">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        </button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-light me-2">
+                        <i class="fas fa-sign-in-alt me-1"></i> Login
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-1"></i> Register
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-4">Find Your Perfect Furry Friend</h1>
+            <p class="lead mb-5">Thousands of pets are waiting for their forever homes. Could yours be here?</p>
+            <a href="#pets" class="btn btn-primary btn-lg px-4 me-2">
+                <i class="fas fa-search"></i> Browse Pets
+            </a>
+            <a href="#" class="btn btn-outline-light btn-lg px-4">
+                <i class="fas fa-question-circle"></i> How Adoption Works
+            </a>
+        </div>
+    </section>
+    {% block content %}
+    <!-- Main Content -->
+    <main class="container my-5">
+        <!-- Filter Section -->
+        <!-- Filter Section -->
+        <div class="filter-card p-4 mb-5">
+            <h4 class="mb-4"><i class="fas fa-filter"></i> Filter Pets</h4>
+            <form method="get" action="{% url 'home' %}">
+                <div class="row g-3">
+
+                    <div class="col">
+                        {{ form.pet_type.label_tag }}
+                        {{ form.pet_type }}
+                        {% if form.pet_type.errors %}
+                        <div class="text-danger small">{{ form.pet_type.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col">
+                        {{ form.size.label_tag }}
+                        {{ form.size }}
+                        {% if form.size.errors %}
+                        <div class="text-danger small">{{ form.size.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col">
+                        {{ form.gender.label_tag }}
+                        {{ form.gender }}
+                        {% if form.gender.errors %}
+                        <div class="text-danger small">{{ form.gender.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col">
+                        {{ form.min_age.label_tag }}
+                        {{ form.min_age }}
+                        {% if form.min_age.errors %}
+                        <div class="text-danger small">{{ form.min_age.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col">
+                        {{ form.max_age.label_tag }}
+                        {{ form.max_age }}
+                        {% if form.max_age.errors %}
+                        <div class="text-danger small">{{ form.max_age.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col">
+                        {{ form.max_fee.label_tag }}
+                        {{ form.max_fee }}
+                        {% if form.max_fee.errors %}
+                        <div class="text-danger small">{{ form.max_fee.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Apply
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <!-- Pets Grid -->
+        <div class="row g-4" id="pets">
+            {% for pet in pets %}
+            <div class="col-lg-4 col-md-6">
+                <a href="{% url 'pet_details' pet.id %}" style="text-decoration: none; color: inherit;">
+                    <div class="pet-card card h-100">
+                        <div class="position-relative">
+                            <img src="{{ pet.image.url }}" class="pet-image" alt="{{ pet.name }}">
+                            <span
+                                class="adoption-badge badge {% if pet.is_adopted %}bg-secondary{% else %}bg-success{% endif %}">
+                                {% if pet.is_adopted %}Adopted{% else %}Available{% endif %}
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h3 class="card-title mb-0">{{ pet.name }}</h3>
+                                {% if pet.adoption_fee %}
+                                <span class="badge bg-primary fs-6">${{ pet.adoption_fee }}</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-light text-dark">
+                                    <i
+                                        class="fas fa-{% if pet.pet_type == 'Dog' %}dog{% else %}cat{% endif %} me-2"></i>
+                                    {{ pet.pet_type }}
+                                </span>
+                                <span class="badge bg-light text-dark">
+                                    <i class="fas fa-venus-mars me-2"></i>
+                                    {{ pet.gender }}
+                                </span>
+                                <span class="badge bg-light text-dark">
+                                    <i class="fas fa-weight-hanging me-2"></i>
+                                    {{ pet.size }}
+                                </span>
+                            </div>
+
+                            <p class="card-text text-muted">{{ pet.description }}</p>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt me-1"></i>
+                                        {{ pet.location }}
+                                    </small>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-day me-1"></i>
+                                        {{ pet.posted_date|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            {% if not pet.is_adopted %}
+                            <a href="{% url 'pet_details' pet.id %}" class="btn btn-primary w-100">
+                                <i class="fas fa-heart me-2"></i>Adopt Now
+                            </a>
+                            {% else %}
+                            <button class="btn btn-outline-secondary w-100" disabled>
+                                <i class="fas fa-check me-2"></i>Already Adopted
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if pets.has_other_pages %}
+        <nav class="mt-5" aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+
+                {% if pets.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pets.previous_page_number }}">Previous</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+                {% endif %}
+
+                {% for page_num in pets.paginator.page_range %}
+                {% if pets.number == page_num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ page_num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if pets.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ pets.next_page_number }}">Next</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                {% endif %}
+
+            </ul>
+        </nav>
+        {% endif %}
+    </main>
+    {% endblock %}
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5 mt-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <h4 class="mb-3"><i class="fas fa-paw me-2"></i>PetAdopt</h4>
+                    <p>Connecting loving homes with animals in need since 2018. Committed to ethical adoptions and
+                        animal welfare.</p>
+                </div>
+                <div class="col-lg-2">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li class="mb-2"><a href="#">About Us</a></li>
+                        <li class="mb-2"><a href="#">Adoption Process</a></li>
+                        <li class="mb-2"><a href="#">FAQ</a></li>
+                        <li class="mb-2"><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="mb-3">Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            123 Adoption Way, Pet City
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-phone me-2"></i>
+                            (555) 123-4567
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-envelope me-2"></i>
+                            info@petadopt.com
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5 class="mb-3">Newsletter</h5>
+                    <form>
+                        <div class="input-group">
+                            <label>
+                                <input type="email" class="form-control" placeholder="Enter email">
+                            </label>
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Never miss new pet arrivals</small>
+                    </form>
+                </div>
+            </div>
+            <hr class="my-5">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2023 PetAdopt. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="social-icons">
+                        <a href="#" class="text-white mx-2"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white mx-2"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Basic filter functionality
+        document.querySelectorAll('.filter-card select').forEach(select => {
+            select.addEventListener('change', function () {
+                // Implement filter logic here
+                console.log(`Filter by ${this.name}: ${this.value}`);
+            });
+        });
+
+        // Pet card hover effect
+        document.querySelectorAll('.pet-card').forEach(card => {
+            card.addEventListener('mouseenter', function () {
+                this.style.cursor = 'pointer';
+            });
+        });
+    </script>
+</body>
+
+</html>

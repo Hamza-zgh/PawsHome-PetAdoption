@@ -1,0 +1,14 @@
+{% extends 'pets/home.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit {{ pet.name }}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Update Pet</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

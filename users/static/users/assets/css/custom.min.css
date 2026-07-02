@@ -1,0 +1,23 @@
+/*# sourceMappingURL=custom.min.css.map */
+.scroll-bar{
+    max-height: 280px; /* adjust based on your layout */
+    overflow-x: hidden;
+    padding-right: 10px; /* optional: prevents content from being hidden under scrollbar */
+    margin-bottom: 10px;
+}
+/* Error styling */
+.field-errors {
+    color: #f46a6a;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.is-invalid {
+    border-color: #f46a6a !important;
+}
+
+.is-invalid:focus {
+    border-color: #f46a6a;
+    box-shadow: 0 0 0 0.25rem rgba(244, 106, 106, 0.25);
+}
+
