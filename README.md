@@ -41,7 +41,7 @@ A full-featured **Django web application** for pet adoption in Tunisia. Users ca
 ![Homepage](screenshots/Home.png)
 
 ### 🔍 Pet Listings with Filters
-![Available Pets](screenshots/SearchAndAdopt.png)
+![Available Pets](screenshots/searchAndAdopt.png)
 
 ### 🔐 Authentication
 | Register | Login |
@@ -69,7 +69,7 @@ A full-featured **Django web application** for pet adoption in Tunisia. Users ca
 
 ### 1. Clone & Navigate
 ```bash
-git clone https://github.com/yourusername/pawshome.git
+git clone https://https://github.com/Hamza-zgh/PawsHome-PetAdoption.git
 cd pawshome
 ```
 ### 2. Create Virtual Environment
